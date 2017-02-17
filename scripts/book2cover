@@ -15,11 +15,16 @@ class Book2Cover(Book2Anything):
     uses_cover = True
     cover_optional = False
 
+    transform_options = [
+        Option('-W', '--width', action='store', type='int', dest='width', default=None,
+                help='Set width.'),
+        Option('-H', '--height', action='store', type='int', dest='height', default=None,
+                help='Set height.'),
+    ]
+
     @staticmethod
-    def transform(wldoc, cover):
-        output = StringIO()
-        cover(wldoc.book_info).save(output)
-        return OutputFile.from_string(output.getvalue())
+    def transform(wldoc, cover, *args, **kwargs):
+        return wldoc.as_cover(cover_class=cover, *args, **kwargs)
 
 
 if __name__ == '__main__':

@@ -1,3 +1,6 @@
+@page {
+  margin: 5pt;
+}
 @font-face {
     font-family: "DejaVu Serif";
     font-weight: normal;
@@ -30,24 +33,22 @@ body, p, h1, h2, h3, h4 {
 
 body
 {
-	line-height: 1.5em;
-	margin: 0;
+    line-height: 1.5em;
+    margin: 0;
 }
 
 a
 {
-	text-decoration: none;
-	color: #00e;
+    text-decoration: none;
+    color: #00e;
 }
 
 a img {
     border: 0;
 }
 
-#book-text
-{
-	margin: 2em;
-	/*margin-right: 9em;*/
+#book-text {
+    margin: 0;
 }
 
 /* =================================================== */
@@ -57,11 +58,11 @@ a img {
 
 .h2
 {
-	font-size: 2em;
-	margin: 0;
-	margin-top: 1.5em;
-	font-weight: bold;
-	line-height: 1.5em;
+    font-size: 2em;
+    margin: 0;
+    margin-top: 1.5em;
+    font-weight: bold;
+    line-height: 1.5em;
 }
 
 .h3
@@ -75,15 +76,15 @@ a img {
 
 .h4
 {
-	font-size: 1em;
+    font-size: 1em;
     margin: 0;
     margin-top: 1.5em;
-	line-height: 1.5em;
+    line-height: 1.5em;
 }
 
 p
 {
-	margin: 0;
+    margin: 0;
 }
 
 /* ======================== */
@@ -92,63 +93,42 @@ p
 
 .theme-begin
 {
-	border-left: 0.1em solid #DDDDDD;
-	color: #777;
-	padding: 0 0.5em;
-	width: 7.5em;
-	font-style: normal;
-	font-weight: normal;
-	font-size: 0.875em;
-	float: right;
-	margin-right: -9.5em;
-	clear: both;
-	left: 40em;
-	line-height: 1.5em;
-	text-align: left;
-}
-
-.annotation-anchor
-{
-	font-style: normal;
-	font-weight: normal;
-	font-size: 0.875em;
-	display: block;
-	float: left;
-	width: 2.5em;
-	clear: both;
+    border-left: 0.1em solid #DDDDDD;
+    color: #777;
+    padding: 0 0.5em;
+    width: 7.5em;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 0.875em;
+    float: right;
+    margin-right: -9.5em;
+    clear: both;
+    left: 40em;
+    line-height: 1.5em;
+    text-align: left;
 }
 
 .annotation
 {
-    margin: 0;
-    margin-top: 1.5em;
-}
-
-.annotation-body
-{
-	margin-left: 2.5em;
-	font-size: 0.875em;
+    margin-bottom: 0.3em;
+    text-align: justify;
 }
 
 .block
 {
-	font-size: 0.875em;
-	padding: 1em;
+    font-size: 0.875em;
+    padding: 1em;
 }
+
 
 /* ============= */
 /* = Numbering = */
 /* ============= */
 
-.anchor
+.anchor sup
 {
-	margin: -0.25em -0.5em;
-	color: #777;
-	font-size: 0.875em;
-	width: 2em;
-	text-align: center;
-	padding: 0.25em 0.5em;
-	line-height: 1.5em;
+    line-height: 0;
+    font-size: 0.7em;
 }
 
 /* =================== */
@@ -207,9 +187,9 @@ p
     text-align: center;
     font-weight: bold;
 
-	font-size: 1.125em;
-	line-height: 1.5em;
-	margin-bottom: -0.25em;
+    font-size: 1.125em;
+    line-height: 1.5em;
+    margin-bottom: -0.25em;
 }
 
 .subtitle
@@ -218,109 +198,119 @@ p
     text-align: center;
     font-weight: bold;
 
-	font-size: 1.5em;
-	line-height: 1.5em;
-	margin-top: -0.25em;
+    font-size: 1.5em;
+    line-height: 1.5em;
+    margin-top: -0.25em;
 }
 
 div.didaskalia
 {
-	font-style: italic;
-	margin-top: 0.5em;
-	margin-left: 1.5em;
+    font-style: italic;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 1.5em;
 }
 
-div.kwestia
+.kwestia
 {
-	margin-top: 0.5em;
+    margin-top: 0.5em;
 }
 
 .paragraph
 {
-	text-align: justify;
-	margin-top: 1.5em;
+    text-align: justify;
+    margin: 0;
+    text-indent: 1.2em;
+}
+
+h1 + .paragraph, h2 + .paragraph
+{
+    text-indent: 0;
+}
+
+h2 + .paragraph:first-letter
+{
+    font-size: 1.6em;
 }
 
 .motto
 {
-	text-align: justify;
-	font-style: italic;
-	margin-top: 1.5em;
-}
-
-.motto_podpis
-{
-	font-size: 0.875em;
-	text-align: right;
-}
-
-div.fragment
-{
-	border-bottom: 0.1em solid #999;
-	padding-bottom: 1.5em;
-}
-
-div.note
-{
-	text-align: right;
-	font-style: italic;
-}
-div.note div.paragraph
-{
-    text-align: right;
+    text-align: justify;
     font-style: italic;
+    margin-top: 1.5em;
 }
-div.dedication
+
+.motto_podpis, .motto_podpis .paragraph
 {
-    text-align: right;
-    font-style: italic;
-}
-div.dedication div.paragaph
-{
+    font-size: 0.875em;
     text-align: right;
     font-style: italic;
 }
 
+.fragment
+{
+    border-bottom: 0.1em solid #999;
+    padding-bottom: 1.5em;
+}
+
+.note
+{
+    text-align: right;
+    font-style: italic;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+.note .paragraph
+{
+    text-align: justify;
+}
+
+.dedication, .dedication .paragraph
+{
+    text-align: right;
+    font-style: italic;
+}
 
 hr.spacer
 {
-	height: 3em;
-	visibility: hidden;
+    height: 3em;
+    visibility: hidden;
 }
 
 hr.spacer-line
 {
-	margin: 0;
-	margin-top: 1.5em;
-	margin-bottom: 1.5em;
-	border: none;
-	border-bottom: 0.1em solid #000;
+    margin: 0;
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    border: none;
+    border-bottom: 0.1em solid #000;
 }
 
 .spacer-asterisk
 {
-	padding: 0;
+    padding: 0;
     margin: 0;
     margin-top: 1.5em;
     margin-bottom: 1.5em;
-	text-align: center;
+    text-align: center;
 }
 
 div.person-list ol
 {
-	list-style: none;
-	padding: 0;
-	padding-left: 1.5em;
+    list-style: none;
+    padding: 0;
+    padding-left: 1.5em;
 }
 
 .place-and-time
 {
-	font-style: italic;
+    font-style: italic;
 }
 
 em.math
 {
-	font-style: italic;
+    font-style: italic;
 }
 em.foreign-word
 {
@@ -337,20 +327,20 @@ em.didaskalia
 
 em.author-emphasis
 {
-	letter-spacing: 0.1em;
+    letter-spacing: 0.1em;
 }
 
 .person-list em.person
 {
-	font-style: normal;
-	/*font-variant: small-caps;*/
-	text-transform: uppercase;
+    font-style: normal;
+    /*font-variant: small-caps;*/
+    text-transform: uppercase;
 }
 
 .info
 {
-	text-align: center;
-	margin-bottom: 1em;
+    text-align: center;
+    margin-bottom: 1em;
 }
 .info div
 {
@@ -359,14 +349,23 @@ em.author-emphasis
 
 .info img
 {
-	margin: 0;
-	margin-left: 2em;
-	margin-right: 2em;
+    margin: 0;
+    margin-left: 2em;
+    margin-right: 2em;
 }
 
-p.minor {
+p.minor-info {
+    text-align: center;
+    margin-bottom: 1em;
     font-size: 0.75em;
 }
 p.footer {
     margin-top: 2em;
+}
+
+table {
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid black;
 }

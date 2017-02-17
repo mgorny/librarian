@@ -36,7 +36,7 @@
         <xsl:choose>
             <xsl:when test="@morefloats = 'new'">
                 <TeXML escape="0">
-                    \usepackage[maxfloats=64]{morefloats}
+                    \usepackage[maxfloats=53]{morefloats}
                 </TeXML>
             </xsl:when>
             <xsl:when test="@morefloats = 'old'">
@@ -60,10 +60,15 @@
         <env name="document">
             <xsl:if test="@data-cover-width">
                 <cmd name="makecover">
-                    <parm><xsl:value-of select="210 * @data-cover-width div @data-cover-height" />mm</parm>
                     <parm>210mm</parm>
+                    <parm><xsl:value-of select="210 * @data-cover-height div @data-cover-width" />mm</parm>
                 </cmd>
             </xsl:if>
+                <xsl:if test="@thanks">
+                    <TeXML escape="0">
+                        \def\thanknote{<TeXML escape="1"><xsl:value-of select="@thanks" /></TeXML>}
+                    </TeXML>
+                </xsl:if>
             <cmd name="maketitle" />
 
             <cmd name="tytul"><parm>
@@ -88,8 +93,8 @@
             <xsl:apply-templates select="utwor" mode="part" />
 
             <TeXML escape="0">
-                \def\coverby{
-                <xsl:if test="@data-cover-by">Okładka na podstawie: 
+                <xsl:if test="@data-cover-by">
+                \def\coverby{Okładka na podstawie:
                     <xsl:choose>
                     <xsl:when test="@data-cover-source">
                         \href{\datacoversource}{\datacoverby}
@@ -98,11 +103,35 @@
                         \datacoverby{}
                     </xsl:otherwise>
                     </xsl:choose>
-                </xsl:if>
                 }
+                </xsl:if>
+                \def\editors{<TeXML escape="1"><xsl:call-template name="editors" /></TeXML>}
+                <xsl:if test="@funders">
+                    \def\funders{Publikację ufundowali i ufundowały:
+                        <TeXML escape="1"><xsl:value-of select="@funders" /></TeXML>.}
+                </xsl:if>
+
+                <xsl:if test="@sponsor-note|data-sponsor">
+                    \def\sponsors{
+                        \scriptsize
+                        <xsl:choose>
+                            <xsl:when test="@sponsor-note">
+                                <TeXML escape="1"><xsl:value-of select="@sponsor-note" /></TeXML>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                Sfinansowano ze~środków:
+                            </xsl:otherwise>
+                        </xsl:choose>
+
+                        \vspace{1em}
+
+                        <xsl:apply-templates select="data-sponsor" mode="sponsor" />
+                    }
+                </xsl:if>
             </TeXML>
 
             <cmd name="editorialsection" />
+
         </env>
     </TeXML>
 </xsl:template>
@@ -138,14 +167,14 @@
 
 <xsl:template match="rdf:RDF" mode="titlepage">
     <TeXML escape="0">
-        \def\authors{<xsl:call-template name="authors" />}
+        \def\authors{<TeXML escape="1"><xsl:call-template name="authors" /></TeXML>}
         \author{\authors}
-        \title{<xsl:apply-templates select=".//dc:title" mode="inline" />}
-        \def\translatorsline{<xsl:call-template name="translators" />}
+        \title{<TeXML escape="1"><xsl:apply-templates select=".//dc:title" mode="inline" /></TeXML>}
+        \def\translatorsline{<TeXML escape="1"><xsl:call-template name="translators" /></TeXML>}
 
-        \def\bookurl{<xsl:value-of select=".//dc:identifier.url" />}
+        \def\bookurl{<TeXML escape="1"><xsl:value-of select=".//dc:identifier.url" /></TeXML>}
 
-        \def\rightsinfo{Ten utwór nie jest chroniony prawem autorskim i~znajduje się w~domenie
+        \def\rightsinfo{Ten utwór nie jest objęty majątkowym prawem autorskim i~znajduje się w~domenie
             publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
             i~rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
             (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
@@ -154,16 +183,15 @@
             Uznanie Autorstwa – Na Tych Samych Warunkach 3.0 PL}.}
         <xsl:if test=".//dc:rights.license">
             \def\rightsinfo{Ten utwór jest udostepniony na licencji
-            \href{<xsl:value-of select=".//dc:rights.license" />}{<xsl:value-of select=".//dc:rights" />}.}
+            \href{<xsl:value-of select=".//dc:rights.license" />}{<TeXML escape="1"><xsl:apply-templates select=".//dc:rights" mode="inline" /></TeXML>}.}
         </xsl:if>
 
         \def\sourceinfo{
             <xsl:if test=".//dc:source">
-                Tekst opracowany na podstawie: <xsl:apply-templates select=".//dc:source" mode="inline" />
+                Tekst opracowany na podstawie: <TeXML escape="1"><xsl:apply-templates select=".//dc:source" mode="inline" /></TeXML>
                 \vspace{.6em}
             </xsl:if>}
-        \def\description{<xsl:apply-templates select=".//dc:description" mode="inline" />}
-        \def\editors{<xsl:call-template name="editors" />}
+        \def\description{<TeXML escape="1"><xsl:apply-templates select=".//dc:description" mode="inline" /></TeXML>}
     </TeXML>
 </xsl:template>
 
@@ -228,6 +256,12 @@
     </cmd>
 </xsl:template>
 
+<xsl:template match="ilustr">
+    <cmd name="ilustr">
+        <parm><xsl:value-of select="@src" /></parm>
+        <parm><xsl:value-of select="@alt" /></parm>
+    </cmd>
+</xsl:template>
 
 <!-- ========================================== -->
 <!-- = PARAGRAPH TAGS                         = -->
@@ -376,13 +410,10 @@
 </xsl:template>
 
 <xsl:template name="editors">
-    <xsl:if test="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed">
+    <xsl:if test="@editors">
         <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
-        <xsl:for-each select="//dc:contributor.editor_parsed|//dc:contributor.technical_editor_parsed[not(//dc:contributor.editor_parsed/text()=text())]">
-            <xsl:sort select="@sortkey" />
-            <xsl:if test="position() != 1">, </xsl:if>
-            <xsl:apply-templates mode="inline" />
-        </xsl:for-each>.
+        <xsl:value-of select="@editors" />
+        <xsl:text>.</xsl:text>
     </xsl:if>
 </xsl:template>
 
@@ -394,6 +425,71 @@
                 <xsl:apply-templates mode="inline" />
             </xsl:for-each>
         </parm></cmd>
+    </xsl:if>
+</xsl:template>
+
+<xsl:template match="data-sponsor" mode="sponsor">
+    <cmd name="par"><parm>
+    <xsl:choose>
+        <xsl:when test="@src">
+            \includegraphics[height=0.25\textwidth,width=0.25\textwidth,keepaspectratio]{<xsl:value-of select="@src" />}
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="@name" />
+        </xsl:otherwise>
+    </xsl:choose>
+    </parm></cmd>
+</xsl:template>
+
+<xsl:template match="mat" mode="inline">
+    <TeXML escape="0">
+        <xsl:text>$</xsl:text>
+        <xsl:value-of select="wl:mathml_latex(.)" />
+        <xsl:text>$</xsl:text>
+    </TeXML>
+</xsl:template>
+
+<xsl:template match="mat">
+    <TeXML escape="0">
+        <xsl:text>$$</xsl:text>
+        <xsl:value-of select="wl:mathml_latex(.)" />
+        <xsl:text>$$</xsl:text>
+    </TeXML>
+</xsl:template>
+
+<xsl:template match="tabela|tabelka">
+    <cmd name="par" />
+    <cmd name="vspace"><parm>1em</parm></cmd>
+    <group><cmd name="raggedright" />
+    <env name="longtabu"> to <TeXML escape="0">\textwidth </TeXML>
+      <!--parm><cmd name="textwidth"/></parm-->
+      <parm><TeXML escape="0"><xsl:value-of select="@_format" /></TeXML></parm>
+        <xsl:choose>
+        <xsl:when test="@ramka='1' or @ramki='1'">
+          <cmd name="hline" />
+          <xsl:apply-templates mode="wiersze-ramki"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:apply-templates/>
+        </xsl:otherwise>
+        </xsl:choose>
+    </env>
+    </group>
+    <cmd name="vspace"><parm>1em</parm></cmd>
+</xsl:template>
+<xsl:template match="wiersz" mode="wiersze-ramki">
+    <xsl:apply-templates />
+    <spec cat="esc"/><spec cat="esc"/>
+    <cmd name="hline" gr="0" />
+</xsl:template>
+<xsl:template match="wiersz">
+    <xsl:apply-templates />
+    <spec cat="esc"/><spec cat="esc"/>
+</xsl:template>
+<xsl:template match="kol">
+    <xsl:apply-templates mode="inline"/>
+    <xsl:if test="position() &lt; last()">
+    <spec cat="align"/>
     </xsl:if>
 </xsl:template>
 
@@ -425,6 +521,7 @@
 <xsl:template match="extra|uwaga" mode="inline" />
 
 <xsl:template match="nota_red" />
+<xsl:template match="abstrakt" />
 
 <!-- ======== -->
 <!-- = TEXT = -->

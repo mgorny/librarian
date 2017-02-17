@@ -32,7 +32,7 @@
                       </a>
                   </xsl:when>
                   <xsl:otherwise>
-                    Ten utwór nie jest chroniony prawem autorskim i znajduje się w domenie
+                    Ten utwór nie jest objęty majątkowym prawem autorskim i znajduje się w domenie
                     publicznej, co oznacza że możesz go swobodnie wykorzystywać, publikować
                     i rozpowszechniać. Jeśli utwór opatrzony jest dodatkowymi materiałami
                     (przypisy, motywy literackie etc.), które podlegają prawu autorskiemu, to
@@ -48,7 +48,7 @@
                   <xsl:value-of select="//dc:identifier.url" />
               </xsl:attribute>
               <xsl:attribute name="title">
-                  <xsl:value-of select="wl:person_name(//dc:creator/text())" />, <xsl:value-of select="//dc:title" />
+                  <xsl:for-each select="//dc:creator/text()"><xsl:value-of select="wl:person_name(.)"/>, </xsl:for-each><xsl:value-of select="//dc:title" />
               </xsl:attribute>
               <xsl:value-of select="//dc:identifier.url" />
           </a></p>
@@ -62,6 +62,8 @@
           </xsl:if>
 
           <xsl:call-template name="editors" />
+
+          <xsl:call-template name="funders" />
 
           <xsl:if test="@data-cover-by">
             <p class="info">Okładka na podstawie: 
@@ -81,15 +83,8 @@
             </p>
           </xsl:if>
 
-          <div class="info">
-          <img src="jedenprocent.png" alt="Logo 1%" />
-          <div>Przekaż 1% podatku na rozwój Wolnych Lektur.</div>
-          <div>Nazwa organizacji: Fundacja Nowoczesna Polska</div>
-          <div>KRS 0000070056</div>
-          </div>
-
           <p class="info">&#160;</p>
-          <p class="minor info">
+          <p class="minor-info">
               Plik wygenerowany dnia <span id="file_date"><xsl:value-of select="substring(date:date(), 1, 10)" /></span>.
           </p>
 
@@ -103,20 +98,18 @@
   </xsl:template>
 
   <xsl:template name="editors">
-    <xsl:if test="//dc:contributor.editor[text()]|//dc:contributor.technical_editor[text()]">
+    <xsl:if test="@editors">
         <p class="info">
             <xsl:text>Opracowanie redakcyjne i przypisy: </xsl:text>
-            <xsl:for-each select="//dc:contributor.editor[text()]|//dc:contributor.technical_editor[text() and not(//dc:contributor.editor/text()=text())]">
-                <xsl:sort />
-                <xsl:if test="position() != 1">, </xsl:if>
-                <xsl:apply-templates mode="person" />
-            </xsl:for-each>.
-        </p>
+            <xsl:value-of select="@editors" />.</p>
     </xsl:if>
   </xsl:template>
 
-  <xsl:template match="dc:contributor.editor|dc:contributor.technical_editor">
-      <br /><xsl:apply-templates mode='person' />
+  <xsl:template name="funders">
+    <xsl:if test="@funders">
+        <p class="minor-info">Publikację ufundowali i ufundowały:
+            <xsl:value-of select="@funders" />.</p>
+    </xsl:if>
   </xsl:template>
 
   <xsl:template match="text()" mode="person">

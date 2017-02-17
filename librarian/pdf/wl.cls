@@ -73,9 +73,21 @@
 \usepackage{xunicode}
 \usepackage{xltxtra}
 
+\usepackage{longtable}
+\usepackage{tabu}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+
 \usepackage[overload]{textcase}
 \usepackage{scalefnt}
 \usepackage[colorlinks=true,linkcolor=black,setpagesize=false,urlcolor=black,xetex]{hyperref}
+
+\newfontfamily\alien[
+SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
+Numbers=OldStyle,
+Scale=0.85,
+LetterSpace=-1.0
+] {DejaVu Serif}
 
 \ifenablewlfont
 \setmainfont [
@@ -90,14 +102,6 @@ Numbers=OldStyle,
 Scale=1.04,
 LetterSpace=-1.0
 ] {JunicodeWL}
-
-\newfontfamily\alien[
-SmallCapsFeatures = {Letters={SmallCaps,UppercaseSmallCaps}},
-Numbers=OldStyle,
-Scale=0.85,
-LetterSpace=-1.0
-] {DejaVu Serif}
-
 
 \defaultfontfeatures{
 SizeFeatures={
@@ -126,6 +130,8 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
 \pagestyle{plain}
 \usepackage{fancyhdr}
+\usepackage{marginnote}
+
 
 \makeatletter
 
@@ -215,6 +221,11 @@ Letters={SmallCaps,UppercaseSmallCaps}
         \vspace{.5em}
     \fi
 
+    \ifdefined\thanknote
+        \thanknote
+        \vspace{.5em}
+    \fi
+
     Utwór opracowany został w ramach projektu \href{http://www.wolnelektury.pl/}{Wolne Lektury}
     przez \href{http://nowoczesnapolska.org.pl}{fundację Nowoczesna Polska}.
 
@@ -233,6 +244,13 @@ Letters={SmallCaps,UppercaseSmallCaps}
     \color{theme}
     \noindent \rule{\linewidth}{0.4pt}
 
+    \ifdefined\sponsors
+        \marginnote{%
+            \centering%
+            \sponsors%
+        }
+    \fi
+
     \rightsinfo
     \vspace{.6em}
 
@@ -246,8 +264,37 @@ Letters={SmallCaps,UppercaseSmallCaps}
 
     \editors
 
+    \ifdefined\funders
+        \vspace{.6em}
+        \funders
+    \fi
+
+    \ifdefined\coverby
+        \vspace{.6em}
+        \coverby
+    \fi
+
     \vspace{.6em}
-    \coverby
+    \emph{Wesprzyj Wolne Lektury!}
+
+    Wolne Lektury to projekt fundacji Nowoczesna Polska – organizacji
+    pożytku publicznego działającej na rzecz wolności korzystania
+    z dóbr kultury.
+
+    Co roku do domeny publicznej przechodzi twórczość kolejnych autorów.
+    Dzięki Twojemu wsparciu będziemy je mogli udostępnić wszystkim bezpłatnie.
+
+    \vspace{.6em}
+    \emph{Jak możesz pomóc?}
+
+    Przekaż 1\% podatku na rozwój Wolnych Lektur:
+    Fundacja Nowoczesna Polska, KRS 0000070056.
+
+    Pomóż uwolnić konkretną książkę, wspierając
+    \href{http://www.wolnelektury.pl/wesprzyj/}{zbiórkę na stronie wolnelektury.pl}.
+
+    Przekaż darowiznę na konto:
+    \href{http://nowoczesnapolska.org.pl/pomoz-nam/wesprzyj-nas/}{szczegóły na stronie Fundacji}.
 
     \color{black}
   }
@@ -385,7 +432,7 @@ Letters={Uppercase}
 \par{\textsc{#1}}\nopagebreak%
 }
 \newcommand{\naglowekpodrozdzial}[1]{%
-\par{#1}\nopagebreak%
+\vspace{5ex}\par{#1}\nopagebreak%
 }
 
 \newcommand{\miejsceczas}[1]{%
@@ -395,14 +442,32 @@ Letters={Uppercase}
 \par{\emph{#1}}%
 }
 
+\usepackage{intcalc}
+\usepackage{color}
+\definecolor{gray}{RGB}{200,200,200}
+%\newcounter{parnum}
+\newlength{\parnumwidth}
+\setlength{\parnumwidth}{3em}
+\newcommand{\N}{%
+  \leavevmode\refstepcounter{parnum}\reversemarginpar%
+  \marginnote{\textcolor{gray}{\small{\theparnum}}}%
+  \reversemarginpar}
+\newcommand{\Nw}{%
+  \leavevmode\refstepcounter{parnum}\reversemarginpar%
+  \ifnum\intcalcMod{\value{parnum}}{5}=0%
+  \marginnote{\textcolor{gray}{\small{\theparnum}}}%
+  \fi\reversemarginpar}
+\renewcommand{\N}{}
+\renewcommand{\Nw}{}
+
 \newcommand{\akap}[1]{%
-\par{#1}%
+\par{\N#1}%
 }
 \newcommand{\akapdialog}[1]{%
-\par{#1}%
+\par{\N#1}%
 }
 \newcommand{\akapcd}[1]{%
-\par{#1}%
+\par{\N#1}%
 }
 
 \newcommand{\mottopodpis}[1]{%
@@ -417,23 +482,23 @@ Letters={Uppercase}
 \par{\noindent{\ignorespaces#1\vspace{1em}}}%
 }
 
-\newcommand{\wers}[1]{#1}
+\newcommand{\wers}[1]{\Nw#1}
 
 \newcommand{\wersakap}[1]{%
-\hspace*{1em}#1%
+\Nw\hspace*{1em}#1%
 }
 \newcommand{\werscd}[1]{%
-\hspace*{8em}#1%
+\Nw\hspace*{8em}#1%
 }
 \newcommand{\werswciety}[2][1em]{%
-\hspace*{#1}#2%
+\Nw\hspace*{#1}#2%
 }
 
 \ifshowfootnotes
   \newcommand{\pa}[1]{\NoCaseChange{\footnote{#1 [przypis autorski]}}}
-  \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1}}}
-  \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1}}}
-  \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1}}}
+  \newcommand{\pe}[1]{\NoCaseChange{\footnote{#1 [przypis edytorski]}}}
+  \newcommand{\pr}[1]{\NoCaseChange{\footnote{#1 [przypis redakcyjny]}}}
+  \newcommand{\pt}[1]{\NoCaseChange{\footnote{#1 [przypis tłumacza]}}}
 \else
   \newcommand{\pa}[1]{}
   \newcommand{\pe}[1]{}
@@ -490,3 +555,8 @@ Letters={Uppercase}
 \fi
 }
 
+\newcommand{\ilustr}[2]{%
+\vspace{1em}%
+\par{\noindent\includegraphics[width=\linewidth]{#1}}%
+\vspace{1em}
+}

@@ -8,15 +8,24 @@ from __future__ import with_statement
 import os
 import re
 import shutil
+import urllib
+
+from util import makedirs
+
 
 class UnicodeException(Exception):
     def __str__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message
+        return unicode(self).encode('utf-8')
 
     def __unicode__(self):
         """ Dirty workaround for Python Unicode handling problems. """
-        return self.message
+        args = self.args[0] if len(self.args) == 1 else self.args
+        try:
+            message = unicode(args)
+        except UnicodeDecodeError:
+            message = unicode(args, encoding='utf-8', errors='ignore')
+        return message
 
 class ParseError(UnicodeException):
     pass
@@ -58,12 +67,14 @@ class EmptyNamespace(XMLNamespace):
         return tag
 
 # some common namespaces we use
+XMLNS = XMLNamespace('http://www.w3.org/XML/1998/namespace')
 RDFNS = XMLNamespace('http://www.w3.org/1999/02/22-rdf-syntax-ns#')
 DCNS = XMLNamespace('http://purl.org/dc/elements/1.1/')
 XINS = XMLNamespace("http://www.w3.org/2001/XInclude")
 XHTMLNS = XMLNamespace("http://www.w3.org/1999/xhtml")
 NCXNS = XMLNamespace("http://www.daisy.org/z3986/2005/ncx/")
 OPFNS = XMLNamespace("http://www.idpf.org/2007/opf")
+PLMETNS = XMLNamespace("http://dl.psnc.pl/schemas/plmet/")
 
 WLNS = EmptyNamespace()
 
@@ -264,6 +275,10 @@ class OutputFile(object):
         """Save file to a path. Create directories, if necessary."""
 
         dirname = os.path.dirname(os.path.abspath(path))
-        if not os.path.isdir(dirname):
-            os.makedirs(dirname)
+        makedirs(dirname)
         shutil.copy(self.get_filename(), path)
+
+
+class URLOpener(urllib.FancyURLopener):
+    version = 'FNP Librarian (http://github.com/fnp/librarian)'
+urllib._urlopener = URLOpener()
